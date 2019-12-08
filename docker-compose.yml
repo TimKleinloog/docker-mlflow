@@ -37,8 +37,8 @@ services:
         environment:
             - SERVER_PORT=5000
             - BACKEND_STORE=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres/mlflow
-            - DEFAULT_ARTEFACT_ROOT=s3://${BUCKET_NAME}/
-            - AWS_BUCKET=${BUCKET_NAME}
+            - DEFAULT_ARTEFACT_ROOT=s3://${AWS_BUCKET}/
+            - AWS_BUCKET=${AWS_BUCKET}
             - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
             - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
         ports:
