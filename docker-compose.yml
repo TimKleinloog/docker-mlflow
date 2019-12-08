@@ -1,0 +1,45 @@
+version: "3.7"
+services:
+
+  postgres:
+        image: postgres:9.6
+        environment:
+            - POSTGRES_USER=${POSTGRES_USER}
+            - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+            - POSTGRES_DB=mlflow
+        ports:
+          - "5432:5432"
+        #volumes:
+        #    - ./pgdata:/var/lib/postgresql/data/pgdata
+
+  #minio:
+  #      image: minio/minio:latest
+  #      environment:
+  #         - MINIO_ACCESS_KEY=minio
+  #         - MINIO_SECRET_KEY=minio123
+  #      volumes:
+  #         - ./mlruns:/mlruns
+  #      ports:
+  #         - "9000:9000"
+  #      command: server /mlruns
+  #      healthcheck:
+  #        test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+  #        interval: 30s
+  #        timeout: 20s
+  #        retries: 3
+
+  server:
+        image: tk/docker-mlflow:latest
+        restart: always
+        depends_on:
+            - postgres
+            #- minio
+        environment:
+            - SERVER_PORT=5000
+            - BACKEND_STORE=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres/mlflow
+            - DEFAULT_ARTEFACT_ROOT=s3://${BUCKET_NAME}/
+            - AWS_BUCKET=${BUCKET_NAME}
+            - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+            - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+        ports:
+            - "5000:5000"
